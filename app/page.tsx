@@ -1,42 +1,41 @@
-import Navbar from "@/app/components/Navbar";
-import LogoCard from "@/app/components/LogoCard";
+import { connectDB } from "@/lib/mongodb";
+import Logo from "@/models/Logo";
+import Hero from "@/components/Hero";
+import About from "@/components/About";
+import Process from "@/components/Process";
+import CategoriesSection from "@/components/CategoriesSection";
+import LogoGrid from "@/components/LogoGrid";
+import Contact from "@/components/contact";
+import Navbar from "@/components/Navbar";
+import TemplateCategoriesSection from "@/components/TemplateCategoriesSection";
 
-export default function Home() {
+export default async function Home() {
+  await connectDB();
 
-  const logos = [
-    {
-      image: "/logos/logo1.png",
-      title: "Gaming Logo",
-      desc: "Cool gaming style logo"
-    },
-    {
-      image: "/logos/logo2.png",
-      title: "Tech Logo",
-      desc: "Modern tech brand logo"
-    },
-    {
-      image: "/logos/logo3.png",
-      title: "Esports Logo",
-      desc: "Professional esports logo"
-    }
-  ];
+  const logosDocs = await Logo.find({ type: { $in: ["brand", null] } }).sort({ createdAt: -1 }).lean();
+
+  const logos = logosDocs.map((l: any) => ({
+    id:         l._id.toString(),
+    image:      l.imageUrl,
+    title:      l.title,
+    desc:       l.desc,
+    category:   l.category || "Uncategorized",
+    folderName: l.folderName || null,
+    createdAt:  l.createdAt?.toISOString(),
+  }));
+
+  const categories = ["All", ...Array.from(new Set(logos.map((l) => l.category))).sort()];
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      
+    <div className="bg-[#0a0a0a] min-h-screen">
       <Navbar />
-
-      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {logos.map((logo, index) => (
-          <LogoCard
-            key={index}
-            image={logo.image}
-            title={logo.title}
-            desc={logo.desc}
-          />
-        ))}
-      </div>
-
+      <Hero />
+      {/* <About />
+      <Process /> */}
+      <LogoGrid logos={logos} categories={categories} />
+      <CategoriesSection />
+      <TemplateCategoriesSection />
+      <Contact />
     </div>
   );
 }

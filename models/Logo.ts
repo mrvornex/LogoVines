@@ -1,0 +1,16 @@
+import mongoose, { Schema, models } from "mongoose";
+
+const LogoSchema = new Schema(
+  {
+    imageUrl:   { type: String, required: true },
+    title:      { type: String, required: true },
+    desc:       { type: String, required: true },
+    category:   { type: String, default: "Uncategorized" },
+    folderName: { type: String, default: null },
+    type:       { type: String, enum: ["brand", "template"], default: "brand" },
+  },
+  { timestamps: true }
+);
+
+const Logo = models.Logo || mongoose.model("Logo", LogoSchema);
+export default Logo;
