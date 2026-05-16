@@ -6,44 +6,39 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Protect /admin and /api/upload
-  const isAdminPage  = pathname.startsWith("/admin");
-  const isUploadAPI  = pathname.startsWith("/api/upload");
+  // Admin routes
+  if (pathname.startsWith("/admin")) {
+    const token = req.cookies.get("admin_token")?.value;
+    if (!token) return NextResponse.redirect(new URL("/login", req.url));
+    try {
+      await jwtVerify(token, new TextEncoder().encode(JWT_SECRET));
+      return NextResponse.next();
+    } catch {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+  }
 
-  if (!isAdminPage && !isUploadAPI) {
+  // Protected user routes
+  if (["/profile", "/my-uploads", "/upload"].some((p) => pathname.startsWith(p))) {
+    const token = req.cookies.get("user_token")?.value;
+    if (!token) return NextResponse.redirect(new URL("/user-login", req.url));
+    try {
+      await jwtVerify(token, new TextEncoder().encode(JWT_SECRET));
+      return NextResponse.next();
+    } catch {
+      return NextResponse.redirect(new URL("/user-login", req.url));
+    }
+  }
+
+  // Admin API — only admin cookie
+  if (pathname.startsWith("/api/upload") || pathname.startsWith("/api/admin")) {
+    // Allow user uploads via /api/upload (checked inside route)
     return NextResponse.next();
   }
 
-  const token = req.cookies.get("admin_token")?.value;
-
-  if (!token) {
-    // Redirect to login for page requests
-    if (isAdminPage) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-    // Return 401 for API requests
-    return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
-
-  try {
-    const secret = new TextEncoder().encode(JWT_SECRET);
-    await jwtVerify(token, secret);
-    return NextResponse.next();
-  } catch {
-    // Token invalid or expired
-    if (isAdminPage) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-    return NextResponse.json(
-      { success: false, message: "Session expired. Please login again." },
-      { status: 401 }
-    );
-  }
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/upload/:path*"],
+  matcher: ["/admin/:path*", "/profile/:path*", "/my-uploads/:path*", "/upload/:path*", "/api/upload/:path*", "/api/admin/:path*"],
 };

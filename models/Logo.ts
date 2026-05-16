@@ -8,6 +8,8 @@ const LogoSchema = new Schema(
     category:   { type: String, default: "Uncategorized" },
     folderName: { type: String, default: null },
     type:       { type: String, enum: ["brand", "template"], default: "brand" },
+    uploadedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    status:     { type: String, enum: ["pending", "approved", "rejected"], default: "approved" },
   },
   { timestamps: true }
 );
