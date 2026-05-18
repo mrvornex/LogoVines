@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function PendingApprovals() {
-  const [logos,   setLogos]   = useState<any[]>([]);
+  const [logos, setLogos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [msg,     setMsg]     = useState<{id:string; type:"success"|"error"; text:string}|null>(null);
+  const [msg, setMsg] = useState<{ id: string; type: "success" | "error"; text: string } | null>(null);
 
   const fetchPending = () => {
     fetch("/api/admin/pending").then((r) => r.json()).then((d) => { if (d.success) setLogos(d.logos); }).finally(() => setLoading(false));
@@ -13,8 +13,8 @@ export default function PendingApprovals() {
 
   useEffect(() => { fetchPending(); }, []);
 
-  const action = async (id: string, act: "approve"|"reject") => {
-    const res  = await fetch(`/api/admin/approve/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: act }) });
+  const action = async (id: string, act: "approve" | "reject") => {
+    const res = await fetch(`/api/admin/approve/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: act }) });
     const data = await res.json();
     if (data.success) {
       setLogos((prev) => prev.filter((l) => l._id !== id));
@@ -23,7 +23,7 @@ export default function PendingApprovals() {
     }
   };
 
-  if (loading) return <div className="px-6 md:px-16 py-10"><div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_,i) => <div key={i} className="bg-[#111] rounded-2xl h-52 animate-pulse border border-white/5" />)}</div></div>;
+  if (loading) return <div className="px-6 md:px-16 py-10"><div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="bg-[#111] rounded-2xl h-52 animate-pulse border border-white/5" />)}</div></div>;
 
   return (
     <div className="px-6 md:px-16 py-10">
@@ -56,7 +56,14 @@ export default function PendingApprovals() {
                 <p className="text-gray-500 text-xs mb-1">{logo.category} · {logo.type}</p>
                 <p className="text-gray-600 text-[10px] mb-3">By: {logo.uploadedBy?.name || "Unknown"}</p>
                 {msg?.id === logo._id && (
-                  <div className={`text-xs mb-2 ${msg.type === "success" ? "text-green-400" : "text-red-400"}`}>{msg.text}</div>
+                  <div
+                    className={`text-xs mb-2 ${msg?.type === "success"
+                      ? "text-green-400"
+                      : "text-red-400"
+                      }`}
+                  >
+                    {msg?.text}
+                  </div>
                 )}
                 <div className="flex gap-2">
                   <button onClick={() => action(logo._id, "approve")}
