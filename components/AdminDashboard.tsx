@@ -164,7 +164,6 @@ export default function AdminDashboard() {
               <Link
                 key={r.id}
                 href={`/logo/${r.id}`}
-                target="_blank"
                 className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition group"
               >
                 {/* Thumb */}

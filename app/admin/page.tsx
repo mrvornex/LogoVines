@@ -33,7 +33,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   return (
     <div className="bg-[#0a0a0a] min-h-screen">
       <Navbar />
-      <div className="pt-25 px-6 md:px-16 py-4 flex items-center justify-between border-b border-white/5">
+      <div className="pt-20 px-6 md:px-16 py-4 flex items-center justify-between border-b border-white/5">
         <div>
           <p className="text-[#d4a373] text-xs uppercase tracking-widest">LogoVines</p>
           <h1 className="text-white font-bold text-lg">Admin Panel</h1>

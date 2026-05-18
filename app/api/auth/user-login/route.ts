@@ -21,7 +21,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "Invalid email or password" }, { status: 401 });
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-    const token  = await new SignJWT({ userId: user._id.toString(), name: user.name, email: user.email, role: user.role })
+    const token  = await new SignJWT({
+      userId:   user._id.toString(),
+      name:     user.name,
+      username: user.username,
+      email:    user.email,
+      role:     user.role,
+    })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("7d")
@@ -29,7 +35,7 @@ export async function POST(req: Request) {
 
     const response = NextResponse.json({
       success: true,
-      user: { id: user._id.toString(), name: user.name, email: user.email },
+      user: { id: user._id.toString(), name: user.name, username: user.username, email: user.email },
     });
 
     response.cookies.set("user_token", token, {

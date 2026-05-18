@@ -1,16 +1,17 @@
-import mongoose, { Schema, models } from "mongoose";
+import { NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-const UserSchema = new Schema(
-  {
-    name:     { type: String, required: true, trim: true },
-    email:    { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true },
-    avatar:   { type: String, default: null },
-    bio:      { type: String, default: "" },
-    role:     { type: String, enum: ["user", "admin"], default: "user" },
-  },
-  { timestamps: true }
-);
-
-const User = models.User || mongoose.model("User", UserSchema);
-export default User;
+export async function GET(req: Request) {
+  const cookie = req.headers.get("cookie") || "";
+  const token  = cookie.split(";").find((c) => c.trim().startsWith("user_token="))?.split("=")[1];
+  if (!token) return NextResponse.json({ user: null });
+  try {
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET!));
+    const p = payload as any;
+    return NextResponse.json({
+      user: { id: p.userId, name: p.name, username: p.username, email: p.email }
+    });
+  } catch {
+    return NextResponse.json({ user: null });
+  }
+}
