@@ -13,8 +13,7 @@ export async function DELETE(
     await connectDB();
 
     const { id } = await params;
-
-    const logo = await Logo.findById(id);
+    const logo    = await Logo.findById(id);
 
     if (!logo) {
       return NextResponse.json(
@@ -23,12 +22,17 @@ export async function DELETE(
       );
     }
 
-    // Delete image file from disk
-    const filePath = path.join(process.cwd(), "public", logo.imageUrl);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Try to delete file — skip if read-only (Vercel) or not found
+    try {
+      const filePath = path.join(process.cwd(), "public", logo.imageUrl);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    } catch (fileErr) {
+      console.warn("[DELETE] File not deleted (read-only fs):", fileErr);
     }
 
+    // Always delete from DB
     await Logo.findByIdAndDelete(id);
 
     return NextResponse.json({ success: true, message: "Logo deleted" });
@@ -50,7 +54,7 @@ export async function PATCH(
   try {
     await connectDB();
 
-    const { id } = await params;
+    const { id }              = await params;
     const { title, desc, category } = await req.json();
 
     if (!title?.trim() || !desc?.trim()) {

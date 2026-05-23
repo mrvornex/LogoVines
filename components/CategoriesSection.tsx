@@ -7,6 +7,7 @@ export default async function CategoriesSection() {
   await connectDB();
 
   const counts = await Logo.aggregate([
+    { $match: { status: "approved" } },
     { $group: { _id: "$category", count: { $sum: 1 } } },
   ]);
 
