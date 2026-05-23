@@ -4,13 +4,17 @@ import { useState } from "react";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent]  = useState(false);
+  const [sent,    setSent]    = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) return;
+    setSending(true);
     // TODO: wire to email service / API
+    await new Promise((r) => setTimeout(r, 800)); // simulate
     setSent(true);
+    setSending(false);
   };
 
   return (
@@ -89,9 +93,12 @@ export default function Contact() {
               </div>
               <button
                 type="submit"
-                className="w-full py-4 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm hover:bg-[#e8b989] transition duration-300"
+                disabled={sending}
+                className="w-full py-4 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm hover:bg-[#e8b989] transition duration-300 disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                Send Message
+                {sending ? (
+                  <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/></svg>Sending...</>
+                ) : "Send Message"}
               </button>
             </form>
           )}
@@ -99,9 +106,9 @@ export default function Contact() {
       </div>
 
       {/* Footer */}
-      {/* <div className="mt-20 pt-8 border-t border-white/5 text-center text-gray-600 text-xs tracking-widest uppercase">
+      <div className="mt-20 pt-8 border-t border-white/5 text-center text-gray-600 text-xs tracking-widest uppercase">
         © {new Date().getFullYear()} LogoVines. All rights reserved.
-      </div> */}
+      </div>
     </section>
   );
 }

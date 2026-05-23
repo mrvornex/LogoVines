@@ -20,6 +20,24 @@ export async function POST(req: Request) {
     if (!match)
       return NextResponse.json({ success: false, message: "Invalid email or password" }, { status: 401 });
 
+    // Check if email is verified
+    if (!user.isVerified) {
+      return NextResponse.json({
+        success: false,
+        message: "Please verify your email first. Check your inbox for the verification link.",
+        notVerified: true,
+      }, { status: 403 });
+    }
+
+    // Check email verification
+    if (!user.isVerified) {
+      return NextResponse.json({
+        success:        false,
+        message:        "Please verify your email first. Check your inbox for the verification link.",
+        notVerified:    true,
+      }, { status: 403 });
+    }
+
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
     const token  = await new SignJWT({
       userId:   user._id.toString(),

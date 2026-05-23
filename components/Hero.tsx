@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 const WORDS = ["Identity", "Legacy", "Vision", "Story", "Mark"];
 
-export default function Hero() {
+interface HeroProps {
+  totalLogos?:   number;
+  totalClients?: number;
+}
+
+export default function Hero({ totalLogos = 0, totalClients = 0 }: HeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [wordIdx, setWordIdx] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -193,9 +198,13 @@ export default function Hero() {
           </a>
         </div>
 
-        {/* Stats */}
+        {/* Stats — real from DB */}
         <div className="flex items-center gap-8 md:gap-14 mt-16 anim-5">
-          {[{ n: "200+", l: "Logos" }, { n: "150+", l: "Clients" }, { n: "5+", l: "Years" }].map((s, i) => (
+          {[
+            { n: totalLogos   > 0 ? `${totalLogos}+`   : "0",  l: "Logos"   },
+            { n: totalClients > 0 ? `${totalClients}+` : "0",  l: "Designers" },
+            { n: "5+",                                          l: "Years"   },
+          ].map((s, i) => (
             <div key={i} className="text-center">
               <p className="text-white font-bold" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(24px, 4vw, 36px)", lineHeight: 1 }}>{s.n}</p>
               <p className="hero-sub text-[#d4a373]/60 text-[9px] tracking-[0.35em] uppercase mt-1.5">{s.l}</p>

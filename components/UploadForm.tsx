@@ -4,6 +4,12 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES } from "@/lib/categories";
 
+const Spinner = () => (
+  <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/>
+  </svg>
+);
+
 type UploadTab = "file" | "folder";
 
 interface FolderImage {
@@ -31,14 +37,42 @@ export default function UploadForm() {
   const [folderName,   setFolderName]   = useState("");
   const [folderImages, setFolderImages] = useState<FolderImage[]>([]);
 
-  const [loading,  setLoading]  = useState(false);
-  const [success,  setSuccess]  = useState("");
-  const [error,    setError]    = useState("");
+  const [loading,   setLoading]   = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [success,   setSuccess]   = useState("");
+  const [error,     setError]     = useState("");
 
   const fileRef   = useRef<HTMLInputElement>(null);
   const folderRef = useRef<HTMLInputElement>(null);
 
   const toPreview = (f: File) => URL.createObjectURL(f);
+
+  // AI generate title + desc from image
+  const generateWithAI = async (file: File) => {
+    setAiLoading(true); setError("");
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const res  = await fetch("/api/ai-generate", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success) { setTitle(data.title); setDesc(data.desc); }
+      else setError("AI failed: " + (data.message || "Try again"));
+    } catch { setError("AI generation failed. Try again."); }
+    finally { setAiLoading(false); }
+  };
+
+  const generateFolderItemAI = async (idx: number, file: File) => {
+    setFolderImages((prev) => prev.map((item, i) => i === idx ? { ...item, title: "Generating...", desc: "..." } : item));
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const res  = await fetch("/api/ai-generate", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success) {
+        setFolderImages((prev) => prev.map((item, i) => i === idx ? { ...item, title: data.title, desc: data.desc } : item));
+      }
+    } catch {}
+  };
 
   const resetForm = () => {
     setImage(null); setPreview(""); setTitle(""); setDesc("");
@@ -293,6 +327,22 @@ export default function UploadForm() {
                 />
               </div>
 
+              {/* AI Generate Button */}
+              {image && (
+                <button
+                  type="button"
+                  onClick={() => generateWithAI(image)}
+                  disabled={aiLoading}
+                  className="w-full py-3 border border-[#d4a373]/50 text-[#d4a373] rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#d4a373]/10 transition flex items-center justify-center gap-2 disabled:opacity-60"
+                >
+                  {aiLoading ? (
+                    <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/></svg> AI is analyzing image...</>
+                  ) : (
+                    <><span>✨</span> Generate Title & Description with AI</>
+                  )}
+                </button>
+              )}
+
               <div>
                 <label className="block text-xs text-gray-400 uppercase tracking-widest mb-2">Title *</label>
                 <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
@@ -347,11 +397,16 @@ export default function UploadForm() {
                     <div key={i} className="bg-[#111] border border-white/10 rounded-2xl p-4 flex gap-4">
                       <img src={item.preview} alt="" className="w-16 h-16 object-cover rounded-xl flex-shrink-0" />
                       <div className="flex-1 space-y-2">
-                        <input type="text" value={item.title} onChange={(e) => updateFolderItem(i, "title", e.target.value)}
+                        <button type="button" onClick={() => generateFolderItemAI(i, item.file)}
+                          className="w-full py-1.5 border border-[#d4a373]/40 text-[#d4a373] rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-[#d4a373]/10 transition flex items-center justify-center gap-1"
+                        >
+                          {item.title === "Generating..." ? "⏳ Generating..." : "✨ AI Generate"}
+                        </button>
+                        <input type="text" value={item.title === "Generating..." ? "" : item.title} onChange={(e) => updateFolderItem(i, "title", e.target.value)}
                           placeholder="Title *"
                           className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
                         />
-                        <input type="text" value={item.desc} onChange={(e) => updateFolderItem(i, "desc", e.target.value)}
+                        <input type="text" value={item.desc === "..." ? "" : item.desc} onChange={(e) => updateFolderItem(i, "desc", e.target.value)}
                           placeholder="Description *"
                           className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
                         />

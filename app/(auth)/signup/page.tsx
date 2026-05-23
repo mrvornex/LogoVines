@@ -1,12 +1,11 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [form,    setForm]    = useState({ name: "", username: "", email: "", password: "", confirm: "" });
   const [loading, setLoading] = useState(false);
+  const [sent,    setSent]    = useState(false);
   const [error,   setError]   = useState("");
   const [show,    setShow]    = useState(false);
 
@@ -16,12 +15,12 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const res  = await fetch("/api/auth/register", {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: form.name, username: form.username, email: form.email, password: form.password }),
+        body:    JSON.stringify({ name: form.name, username: form.username, email: form.email, password: form.password }),
       });
       const data = await res.json();
-      if (data.success) router.push("/user-login?registered=1");
+      if (data.success) setSent(true);
       else setError(data.message || "Registration failed");
     } catch { setError("Something went wrong"); }
     finally { setLoading(false); }
@@ -38,69 +37,119 @@ export default function SignupPage() {
         </div>
 
         <div className="bg-[#111] border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-white text-xl font-bold mb-1">Join LogoVines</h2>
-          <p className="text-gray-500 text-sm mb-7">Upload and share your logo designs</p>
 
-          {error && <div className="mb-5 p-3 rounded-xl bg-red-900/20 border border-red-500/30 text-red-400 text-sm">⚠ {error}</div>}
+          {/* ── Email Sent Screen ── */}
+          {sent ? (
+            <div className="space-y-5 text-center">
+              <div className="text-6xl">✉️</div>
+              <h3 className="text-white font-bold text-xl">Check your email!</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                We sent a verification link to <strong className="text-white">{form.email}</strong>. Click the link to activate your account.
+              </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
-              <input type="text" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})}
-                placeholder="Ahmad Khan" required
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Username</label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm">@</span>
-                <input type="text" value={form.username}
-                  onChange={(e) => setForm({...form, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "")})}
-                  placeholder="ahmad_khan" required
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
+              {/* Spam warning */}
+              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-xl p-4 text-left">
+                <p className="text-yellow-300 text-xs font-bold mb-1">⚠️ Email going to Spam?</p>
+                <p className="text-yellow-400/70 text-xs leading-relaxed">
+                  Check your <strong className="text-yellow-300">Spam / Junk</strong> folder if you don't see it in inbox.
+                  Open the email and click <strong className="text-yellow-300">"Report as not spam"</strong> to move it to inbox.
+                </p>
               </div>
-              <p className="text-gray-700 text-[10px] mt-1">Only letters, numbers, underscores. Shown in navbar.</p>
+
+              <Link href="/user-login"
+                className="block w-full text-center py-3.5 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#e8b989] transition"
+              >
+                Go to Sign In →
+              </Link>
             </div>
 
-            <div>
-              <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Email</label>
-              <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})}
-                placeholder="you@email.com" required
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
-            </div>
+          ) : (
+            /* ── Signup Form ── */
+            <>
+              <h2 className="text-white text-xl font-bold mb-1">Join LogoVines</h2>
+              <p className="text-gray-500 text-sm mb-7">Upload and share your logo designs</p>
 
-            <div>
-              <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Password</label>
-              <div className="relative">
-                <input type={show ? "text" : "password"} value={form.password}
-                  onChange={(e) => setForm({...form, password: e.target.value})}
-                  placeholder="Min 6 characters" required
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 pr-16 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
-                <button type="button" onClick={() => setShow(!show)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition text-xs uppercase tracking-widest">
-                  {show ? "Hide" : "Show"}
+              {error && (
+                <div className="mb-5 p-3 rounded-xl bg-red-900/20 border border-red-500/30 text-red-400 text-sm">⚠ {error}</div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Full Name */}
+                <div>
+                  <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
+                  <input type="text" value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="Ahmad Khan" required
+                    className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
+                  />
+                </div>
+
+                {/* Username */}
+                <div>
+                  <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Username</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm">@</span>
+                    <input type="text" value={form.username}
+                      onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "") })}
+                      placeholder="ahmad_khan" required
+                      className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
+                    />
+                  </div>
+                  <p className="text-gray-700 text-[10px] mt-1">Only letters, numbers, underscores. Shown in navbar.</p>
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Email</label>
+                  <input type="email" value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder="you@email.com" required
+                    className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
+                  />
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Password</label>
+                  <div className="relative">
+                    <input type={show ? "text" : "password"} value={form.password}
+                      onChange={(e) => setForm({ ...form, password: e.target.value })}
+                      placeholder="Min 6 characters" required
+                      className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 pr-16 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
+                    />
+                    <button type="button" onClick={() => setShow(!show)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition text-xs uppercase tracking-widest"
+                    >
+                      {show ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Confirm Password</label>
+                  <input type="password" value={form.confirm}
+                    onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+                    placeholder="Repeat password" required
+                    className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
+                  />
+                </div>
+
+                <button type="submit" disabled={loading}
+                  className="w-full py-3.5 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#e8b989] transition disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+                >
+                  {loading ? (
+                    <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/></svg>Creating Account...</>
+                  ) : "Create Account"}
                 </button>
-              </div>
-            </div>
+              </form>
 
-            <div>
-              <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Confirm Password</label>
-              <input type="password" value={form.confirm} onChange={(e) => setForm({...form, confirm: e.target.value})}
-                placeholder="Repeat password" required
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
-            </div>
-
-            <button type="submit" disabled={loading}
-              className="w-full py-3.5 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#e8b989] transition disabled:opacity-50 mt-2">
-              {loading ? "Creating Account..." : "Create Account"}
-            </button>
-          </form>
-
-          <p className="text-center text-gray-600 text-sm mt-6">
-            Already have an account?{" "}
-            <Link href="/user-login" className="text-[#d4a373] hover:underline">Sign In</Link>
-          </p>
+              <p className="text-center text-gray-600 text-sm mt-6">
+                Already have an account?{" "}
+                <Link href="/user-login" className="text-[#d4a373] hover:underline">Sign In</Link>
+              </p>
+            </>
+          )}
         </div>
 
         <p className="text-center mt-6">

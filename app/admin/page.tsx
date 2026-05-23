@@ -19,7 +19,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const logosDocs    = await Logo.find().sort({ createdAt: -1 }).lean();
   const logos = logosDocs.map((l: any) => ({
     _id: l._id.toString(), imageUrl: l.imageUrl, title: l.title, desc: l.desc,
-    category: l.category || "Uncategorized", folderName: l.folderName || null, createdAt: l.createdAt?.toISOString(),
+    category: l.category || "Uncategorized", folderName: l.folderName || null,
+    status: l.status || "approved",
+    createdAt: l.createdAt?.toISOString(),
   }));
 
   const tabs = [

@@ -226,10 +226,10 @@ export default function TemplateUploadForm() {
           )}
 
           <button type="submit" disabled={loading}
-            className="w-full py-4 font-bold uppercase tracking-widest text-sm rounded-xl transition duration-300 disabled:opacity-50 text-black"
+            className="w-full py-4 font-bold uppercase tracking-widest text-sm rounded-xl transition duration-300 disabled:opacity-50 text-black flex items-center justify-center gap-2"
             style={{ background: loading ? "#888" : (currentCat?.color || "#d4a373") }}
           >
-            {loading ? "Uploading..." : `Upload to ${currentCat?.label}`}
+            {loading ? (<><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/></svg>Uploading...</>) : `Upload to ${currentCat?.label}`}
           </button>
         </form>
       </div>
