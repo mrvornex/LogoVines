@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
 import { connectDB } from "@/lib/mongodb";
 import Logo from "@/models/Logo";
 import Notification from "@/models/Notification";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { jwtVerify } from "jose";
 
-// Verify admin token — must have role:"admin" in payload
-async function isAdmin(req: Request): Promise<boolean> {
+async function isAdminRequest(req: Request): Promise<boolean> {
   const cookie = req.headers.get("cookie") || "";
   const token  = cookie.split(";").find((c) => c.trim().startsWith("admin_token="))?.split("=")[1];
   if (!token) return false;
@@ -17,14 +15,15 @@ async function isAdmin(req: Request): Promise<boolean> {
   } catch { return false; }
 }
 
-// Get user ID from user token
-async function getUserId(req: Request): Promise<string | null> {
+async function getLoggedInUserId(req: Request): Promise<string | null> {
   const cookie = req.headers.get("cookie") || "";
   const token  = cookie.split(";").find((c) => c.trim().startsWith("user_token="))?.split("=")[1];
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET!));
-    return (payload as any).userId;
+    const p = payload as any;
+    if (!p.userId) return null;
+    return p.userId;
   } catch { return null; }
 }
 
@@ -41,11 +40,9 @@ export async function POST(req: Request) {
     const type        = (data.get("type")        as string)?.trim() || "brand";
     const folderFiles = data.getAll("folderImages") as File[];
 
-    // ── Check who is uploading
-    // IMPORTANT: Check user_token FIRST — if user is logged in, treat as user
-    // even if admin_token cookie also exists in browser
-    const userId      = await getUserId(req);
-    const adminUpload = userId ? false : await isAdmin(req);
+    // Who is uploading?
+    const userId      = await getLoggedInUserId(req);
+    const adminUpload = userId ? false : await isAdminRequest(req);
 
     console.log("[UPLOAD] isAdmin:", adminUpload, "userId:", userId);
 
@@ -56,12 +53,7 @@ export async function POST(req: Request) {
     const status     = adminUpload ? "approved" : "pending";
     const uploadedBy = userId ?? null;
 
-    console.log("[UPLOAD] status:", status, "uploadedBy:", uploadedBy);
-
-    const uploadDir = path.join(process.cwd(), "public/uploads/logos");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-    // ── Single image
+    // ── Single image ──────────────────────────────────────
     if (singleFile && singleFile.size > 0) {
       if (!title || !desc)
         return NextResponse.json({ success: false, message: "Title and description required" });
@@ -69,22 +61,26 @@ export async function POST(req: Request) {
       const bytes    = await singleFile.arrayBuffer();
       const buffer   = Buffer.from(bytes);
       const baseName = singleFile.name.split(/[\\/]/).pop() || singleFile.name;
-      const fileName = `${Date.now()}-${baseName}`;
-      fs.writeFileSync(path.join(uploadDir, fileName), buffer);
+      const fileName = `${Date.now()}-${baseName.replace(/\s+/g, "_")}`;
+
+      // Upload to Cloudinary
+      const { url, publicId } = await uploadToCloudinary(buffer, fileName);
 
       const newLogo = await Logo.create({
-        imageUrl: `/uploads/logos/${fileName}`,
+        imageUrl:     url,
+        cloudinaryId: publicId,
         title, desc, category,
-        folderName: null,
+        folderName:   null,
         type, uploadedBy, status,
       });
 
-      // Notify user on submission
+      console.log("[UPLOAD] Logo saved — status:", status, "cloudinaryId:", publicId);
+
       if (uploadedBy) {
         await Notification.create({
           userId:  uploadedBy,
           type:    "upload_success",
-          message: `Your logo "${title}" has been submitted and is pending review.`,
+          message: `Your logo "${title}" has been submitted and is pending admin review.`,
           logoId:  newLogo._id,
         });
       }
@@ -92,7 +88,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, logo: newLogo, status });
     }
 
-    // ── Folder upload
+    // ── Folder upload ─────────────────────────────────────
     if (folderFiles.length > 0) {
       if (!folderName)
         return NextResponse.json({ success: false, message: "Folder name required" });
@@ -110,11 +106,13 @@ export async function POST(req: Request) {
         const bytes    = await file.arrayBuffer();
         const buffer   = Buffer.from(bytes);
         const baseName = file.name.split(/[\\/]/).pop() || file.name;
-        const fileName = `${Date.now()}-${i}-${baseName}`;
-        fs.writeFileSync(path.join(uploadDir, fileName), buffer);
+        const fileName = `${Date.now()}-${i}-${baseName.replace(/\s+/g, "_")}`;
+
+        const { url, publicId } = await uploadToCloudinary(buffer, fileName);
 
         const logo = await Logo.create({
-          imageUrl: `/uploads/logos/${fileName}`,
+          imageUrl:     url,
+          cloudinaryId: publicId,
           title: imgTitle, desc: imgDesc,
           category: imgCategory,
           folderName, type, uploadedBy, status,
@@ -126,12 +124,11 @@ export async function POST(req: Request) {
       if (!saved.length)
         return NextResponse.json({ success: false, message: "No valid images uploaded" });
 
-      // Notify user
       if (uploadedBy) {
         await Notification.create({
           userId:  uploadedBy,
           type:    "upload_success",
-          message: `Your ${saved.length} logo(s) from "${folderName}" have been submitted and are pending review.`,
+          message: `Your ${saved.length} logo(s) from "${folderName}" submitted — pending admin review.`,
         });
       }
 
@@ -141,7 +138,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, message: "No file provided" });
 
   } catch (error) {
-    console.error("UPLOAD ERROR:", error);
+    console.error("[UPLOAD ERROR]:", error);
     return NextResponse.json({ success: false, message: String(error) });
   }
 }

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Logo from "@/models/Logo";
-import fs from "fs";
-import path from "path";
+import { deleteFromCloudinary, getPublicIdFromUrl } from "@/lib/cloudinary";
 
 // ── DELETE ──────────────────────────────────────────────────
 export async function DELETE(
@@ -22,17 +21,11 @@ export async function DELETE(
       );
     }
 
-    // Try to delete file — skip if read-only (Vercel) or not found
-    try {
-      const filePath = path.join(process.cwd(), "public", logo.imageUrl);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    } catch (fileErr) {
-      console.warn("[DELETE] File not deleted (read-only fs):", fileErr);
-    }
+    // Delete from Cloudinary
+    const publicId = logo.cloudinaryId || getPublicIdFromUrl(logo.imageUrl);
+    await deleteFromCloudinary(publicId);
 
-    // Always delete from DB
+    // Delete from DB
     await Logo.findByIdAndDelete(id);
 
     return NextResponse.json({ success: true, message: "Logo deleted" });
@@ -54,7 +47,7 @@ export async function PATCH(
   try {
     await connectDB();
 
-    const { id }              = await params;
+    const { id }                    = await params;
     const { title, desc, category } = await req.json();
 
     if (!title?.trim() || !desc?.trim()) {

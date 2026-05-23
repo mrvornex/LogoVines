@@ -12,6 +12,7 @@
     "@google/generative-ai": "^0.24.1",
     "adm-zip": "^0.5.17",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
     "jose": "^6.2.3",
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.1",
