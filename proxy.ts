@@ -17,7 +17,7 @@ export async function proxy(req: NextRequest) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
-
+ 
   // Protected user routes
   if (["/profile", "/my-uploads", "/upload"].some((p) => pathname.startsWith(p))) {
     const token = req.cookies.get("user_token")?.value;
