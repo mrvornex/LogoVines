@@ -15,7 +15,7 @@ export async function proxy(req: NextRequest) {
       return NextResponse.next();
     } catch {
       return NextResponse.redirect(new URL("/login", req.url));
-    }
+    } 
   }
  
   // Protected user routes
