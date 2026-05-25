@@ -419,7 +419,7 @@ export default function UploadForm() {
             </>
           )}
 
-          <button
+          <button 
             type="submit" disabled={loading}
             className="w-full py-4 font-bold uppercase tracking-widest text-sm rounded-xl transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-black"
             style={{ background: loading ? "#888" : (currentCat?.color || "#d4a373") }}
