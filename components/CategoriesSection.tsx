@@ -10,7 +10,7 @@ export default async function CategoriesSection() {
     { $match: { status: "approved" } },
     { $group: { _id: "$category", count: { $sum: 1 } } },
   ]);
-
+ 
   const countMap: Record<string, number> = {};
   counts.forEach((c: any) => {
     countMap[categoryToSlug(c._id || "uncategorized")] = c.count;
