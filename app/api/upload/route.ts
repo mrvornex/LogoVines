@@ -41,8 +41,9 @@ export async function POST(req: Request) {
     const folderFiles = data.getAll("folderImages") as File[];
 
     // Who is uploading?
-    const userId      = await getLoggedInUserId(req);
-    const adminUpload = userId ? false : await isAdminRequest(req);
+    // Admin check takes priority — if admin_token valid, treat as admin regardless of user_token
+    const adminUpload = await isAdminRequest(req);
+    const userId      = adminUpload ? null : await getLoggedInUserId(req);
 
     console.log("[UPLOAD] isAdmin:", adminUpload, "userId:", userId);
 
@@ -52,6 +53,8 @@ export async function POST(req: Request) {
 
     const status     = adminUpload ? "approved" : "pending";
     const uploadedBy = userId ?? null;
+
+    console.log("[UPLOAD] status will be:", status);
 
     // ── Single image ──────────────────────────────────────
     if (singleFile && singleFile.size > 0) {
