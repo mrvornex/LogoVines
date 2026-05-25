@@ -137,8 +137,11 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: false, message: "No file provided" });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("[UPLOAD ERROR]:", error);
-    return NextResponse.json({ success: false, message: String(error) });
+    return NextResponse.json({
+      success: false,
+      message: error?.message || String(error) || "Upload failed"
+    });
   }
 }

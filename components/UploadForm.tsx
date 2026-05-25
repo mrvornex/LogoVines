@@ -114,13 +114,13 @@ export default function UploadForm() {
     const data = await res.json();
 
     if (data.success) {
-      setSuccess("Logo uploaded! Redirecting...");
+      setSuccess("Logo uploaded successfully!");
       setTimeout(() => {
         const cat = CATEGORIES.find((c) => c.dbValue === selectedCat);
         router.push(`/category/${cat?.slug || "uncategorized"}`);
       }, 1200);
     } else {
-      setError(data.message || "Upload failed");
+      setError(typeof data.message === "string" ? data.message : "Upload failed — check Cloudinary credentials");
     }
   };
 
@@ -151,7 +151,7 @@ export default function UploadForm() {
         router.push(`/category/${cat?.slug || "uncategorized"}`);
       }, 1200);
     } else {
-      setError(data.message || "Upload failed");
+      setError(typeof data.message === "string" ? data.message : "Upload failed — check Cloudinary credentials");
     }
   };
 
@@ -161,8 +161,8 @@ export default function UploadForm() {
     setLoading(true);
     try {
       tab === "file" ? await submitSingle() : await submitFolder();
-    } catch {
-      setError("Something went wrong");
+    } catch (err: any) {
+      setError(err?.message || JSON.stringify(err) || "Something went wrong");
     } finally {
       setLoading(false);
     }
