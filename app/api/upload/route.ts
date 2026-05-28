@@ -8,11 +8,16 @@ import { jwtVerify } from "jose";
 async function isAdminRequest(req: Request): Promise<boolean> {
   const cookie = req.headers.get("cookie") || "";
   const token  = cookie.split(";").find((c) => c.trim().startsWith("admin_token="))?.split("=")[1];
+  console.log("[ADMIN CHECK] token exists:", !!token);
   if (!token) return false;
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET!));
+    console.log("[ADMIN CHECK] role:", (payload as any).role);
     return (payload as any).role === "admin";
-  } catch { return false; }
+  } catch (e) {
+    console.log("[ADMIN CHECK] verify failed:", e);
+    return false;
+  }
 }
 
 async function getLoggedInUserId(req: Request): Promise<string | null> {
