@@ -4,6 +4,7 @@ import Logo from "@/models/Logo";
 import Notification from "@/models/Notification";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 import { jwtVerify } from "jose";
+import { revalidatePath } from "next/cache";
 
 async function isAdminRequest(req: Request): Promise<boolean> {
   const cookie = req.headers.get("cookie") || "";
@@ -93,6 +94,12 @@ export async function POST(req: Request) {
         });
       }
 
+      // Revalidate public pages so new logo shows immediately
+      revalidatePath("/");
+      revalidatePath("/logos");
+      revalidatePath("/category/all");
+      revalidatePath(`/category/${newLogo.category?.toLowerCase().replace(/\s+/g, "-") || "all"}`);
+
       return NextResponse.json({ success: true, logo: newLogo, status });
     }
 
@@ -139,6 +146,11 @@ export async function POST(req: Request) {
           message: `Your ${saved.length} logo(s) from "${folderName}" submitted — pending admin review.`,
         });
       }
+
+      // Revalidate public pages
+      revalidatePath("/");
+      revalidatePath("/logos");
+      revalidatePath("/category/all");
 
       return NextResponse.json({ success: true, logos: saved, count: saved.length, status });
     }

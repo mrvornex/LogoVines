@@ -4,6 +4,7 @@ import Logo from "@/models/Logo";
 import User from "@/models/User";
 import Notification from "@/models/Notification";
 import { sendEmail, emailApproved, emailRejected } from "@/lib/email";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(
   req: Request,
@@ -43,6 +44,11 @@ export async function PATCH(
         await sendEmail({ to: user.email, ...template });
       }
     }
+
+    // Revalidate so approved logo shows immediately
+    revalidatePath("/");
+    revalidatePath("/logos");
+    revalidatePath("/category/all");
 
     return NextResponse.json({ success: true, status: logo.status });
 

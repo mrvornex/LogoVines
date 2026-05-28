@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { connectDB } from "@/lib/mongodb";
 import Logo from "@/models/Logo";
 import Navbar from "@/components/Navbar";

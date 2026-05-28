@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { connectDB } from "@/lib/mongodb";
 import Logo from "@/models/Logo";
 import Hero from "@/components/Hero";
@@ -38,7 +40,7 @@ export default async function Home() {
     <div className="bg-[#0a0a0a] min-h-screen">
       <Navbar />
       <Hero totalLogos={totalLogos} totalClients={totalClients} />
-      {/* <About /> */}
+      <About />
       <Process />
       <CategoriesSection />
       <TemplateCategoriesSection />
