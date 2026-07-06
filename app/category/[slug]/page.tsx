@@ -35,35 +35,52 @@ export default async function CategoryPage({ params }: Props) {
   const label = slug === "all" ? "All Logos" : slugToLabel(slug);
 
   return (
-    <div className="bg-[#0a0a0a] min-h-screen">
+    <div className="bg-white min-h-screen">
       <Navbar />
-      <div className="pt-20 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-16 py-10">
-          <div className="flex items-center gap-2 text-xs text-gray-600 uppercase tracking-widest mb-5">
-            <Link href="/" className="hover:text-[#d4a373] transition">Home</Link>
-            <span>/</span>
-            <Link href="/category/all" className="hover:text-[#d4a373] transition">Categories</Link>
-            {slug !== "all" && <><span>/</span><span className="text-[#d4a373]">{label}</span></>}
-          </div>
-          <div className="flex items-end justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-white uppercase tracking-wide">{label}</h1>
-              <p className="text-gray-500 text-sm mt-2">{logos.length} logo{logos.length !== 1 ? "s" : ""} found</p>
+      <div className="pt-20">
+
+        {/* Header */}
+        <div className="border-b border-gray-200 px-6 md:px-16 py-8">
+          <div className="max-w-7xl mx-auto">
+
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
+              <Link href="/" className="hover:text-[#1A4450] transition">Home</Link>
+              <span>/</span>
+              <Link href="/category/all" className="hover:text-[#1A4450] transition">Categories</Link>
+              {slug !== "all" && (
+                <><span>/</span><span className="text-[#1A4450]">{label}</span></>
+              )}
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Link href="/category/all" className={`px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest border transition ${slug === "all" ? "bg-[#d4a373] text-black border-[#d4a373]" : "border-white/10 text-gray-500 hover:border-[#d4a373] hover:text-white"}`}>All</Link>
+
+            <h1 className="text-2xl font-bold text-[#1A4450]">{label}</h1>
+            <p className="text-gray-400 text-sm mt-1">{logos.length} logos</p>
+
+            {/* Category pills */}
+            <div className="flex flex-wrap gap-2 mt-5">
+              <Link href="/category/all"
+                className={`px-3 py-1 rounded-full text-xs border transition ${
+                  slug === "all"
+                    ? "bg-[#1A4450] text-white border-[#1A4450]"
+                    : "border-gray-200 text-gray-500 hover:border-[#1A4450] hover:text-[#1A4450]"
+                }`}
+              >All</Link>
               {CATEGORIES.map((cat) => (
                 <Link key={cat.slug} href={`/category/${cat.slug}`}
-                  className={`px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest border transition ${slug === cat.slug ? "bg-[#d4a373] text-black border-[#d4a373]" : "border-white/10 text-gray-500 hover:border-[#d4a373] hover:text-white"}`}
+                  className={`px-3 py-1 rounded-full text-xs border transition ${
+                    slug === cat.slug
+                      ? "bg-[#1A4450] text-white border-[#1A4450]"
+                      : "border-gray-200 text-gray-500 hover:border-[#1A4450] hover:text-[#1A4450]"
+                  }`}
                 >{cat.label}</Link>
               ))}
             </div>
           </div>
         </div>
-      </div>
-      <CategoryPageClient logos={logos} />
-      <div className="text-center py-12">
-        <Link href="/#categories" className="text-gray-600 hover:text-[#d4a373] text-xs uppercase tracking-widest transition">← Back to Categories</Link>
+
+        {/* Logo grid */}
+         <CategoryPageClient logos={logos} currentSlug={slug} />
+
       </div>
     </div>
   );

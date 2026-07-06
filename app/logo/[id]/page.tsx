@@ -18,7 +18,7 @@ export default async function LogoDetailPage({ params }: Props) {
   const logo = await Logo.findById(id).lean() as any;
   if (!logo) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#1A4450] flex items-center justify-center">
         <div className="text-center">
           <p className="text-5xl mb-4">🔍</p>
           <h1 className="text-white text-2xl font-bold mb-2">Logo Not Found</h1>
@@ -28,7 +28,6 @@ export default async function LogoDetailPage({ params }: Props) {
     );
   }
 
-  // Related logos — same category, exclude current
   const related = await Logo.find({
     category: logo.category,
     _id: { $ne: logo._id },
@@ -57,37 +56,37 @@ export default async function LogoDetailPage({ params }: Props) {
   const catSlug = categoryToSlug(logo.category || "uncategorized");
 
   return (
-    <div className="bg-[#0a0a0a] min-h-screen">
+    <div className="bg-[#1A4450] min-h-screen">
       <Navbar />
 
       <div className="pt-20">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-6 md:px-16 py-6">
-          <div className="flex items-center gap-2 text-xs text-gray-600 uppercase tracking-widest">
-            <Link href="/" className="hover:text-[#d4a373] transition">Home</Link>
+          <div className="flex items-center gap-2 text-xs text-white uppercase tracking-widest">
+            <Link href="/" className="transition">Home</Link>
             <span>/</span>
-            <Link href={`/category/${catSlug}`} className="hover:text-[#d4a373] transition">
+            <Link href={`/category/${catSlug}`} className=" transition">
               {logo.category}
             </Link>
             <span>/</span>
-            <span className="text-[#d4a373] truncate max-w-[200px]">{logo.title}</span>
+            <span className="text-[#ffffff] truncate max-w-[200px]">{logo.title}</span>
           </div>
         </div>
 
         {/* Main detail */}
-        <LogoDetailClient logo={logoData} />
+       <LogoDetailClient logo={logoData} related={relatedData} />
 
         {/* Related logos */}
-        {relatedData.length > 0 && (
+        {/* {relatedData.length > 0 && (
           <div className="max-w-7xl mx-auto px-6 md:px-16 py-16 border-t border-white/5">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <p className="text-[#d4a373] text-xs uppercase tracking-[0.3em] mb-1">More Like This</p>
+                <p className="text-[#ffffff] text-xs uppercase tracking-[0.3em] mb-1">More Like This</p>
                 <h2 className="text-2xl font-bold text-white uppercase tracking-wide">Related Logos</h2>
               </div>
               <Link
                 href={`/category/${catSlug}`}
-                className="text-gray-500 hover:text-[#d4a373] text-xs uppercase tracking-widest transition"
+                className="text-white text-xs uppercase tracking-widest transition"
               >
                 View All →
               </Link>
@@ -99,7 +98,7 @@ export default async function LogoDetailPage({ params }: Props) {
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -1,91 +1,102 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import LogoCard from "@/components/LogoCard";
-import LogoCardSkeleton from "@/components/LogoCardSkeleton";
-import { LogoCardProps } from "@/types/logo";
+import Link from "next/link";
+import { CATEGORIES } from "@/lib/categories";
 
-type SortOption = "newest" | "oldest" | "a-z" | "z-a";
-
-interface Props {
-  logos: (LogoCardProps & { createdAt?: string })[];
+interface Logo {
+  id: string;
+  image: string;
+  title: string;
+  desc: string;
+  category: string;
+  folderName?: string | null;
+  createdAt?: string;
 }
 
-export default function CategoryPageClient({ logos }: Props) {
-  const [search,  setSearch]  = useState("");
-  const [sort,    setSort]    = useState<SortOption>("newest");
-  const [loaded,  setLoaded]  = useState(false);
+interface Props {
+  logos: Logo[];
+  currentSlug: string;
+}
 
-  useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 500);
-    return () => clearTimeout(t);
-  }, []);
+export default function CategoryPageClient({ logos, currentSlug }: Props) {
+  const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    let result = [...logos];
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter((l) => l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q));
-    }
-    result.sort((a, b) => {
-      if (sort === "newest") return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
-      if (sort === "oldest") return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
-      if (sort === "a-z")    return a.title.localeCompare(b.title);
-      if (sort === "z-a")    return b.title.localeCompare(a.title);
-      return 0;
-    });
-    return result;
-  }, [logos, search, sort]);
+    if (!search.trim()) return logos;
+    const q = search.toLowerCase();
+    return logos.filter(
+      (l) => l.title.toLowerCase().includes(q) || l.category.toLowerCase().includes(q)
+    );
+  }, [logos, search]);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-16 py-10">
+    <div className="bg-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-6 py-8">
 
-      {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10">
-        <div className="relative flex-1 max-w-sm">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600">
-            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2"/>
-              <path d="M20 20l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </span>
+        {/* Search bar */}
+        {/* <div className="relative max-w-2xl mx-auto mb-8">
           <input
-            type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search logos..."
-            className="w-full bg-[#111] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#d4a373] transition"
+            className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-[#1A4450] focus:outline-none focus:border-[#1A4450] transition"
           />
-          {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition text-xs">✕</button>}
-        </div>
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >✕</button>
+          )}
+        </div> */}
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-gray-600 text-xs uppercase tracking-widest">Sort:</span>
-          {(["newest", "oldest", "a-z", "z-a"] as SortOption[]).map((s) => (
-            <button key={s} onClick={() => setSort(s)}
-              className={`px-4 py-2 rounded-lg text-xs uppercase tracking-widest border transition ${
-                sort === s ? "bg-[#d4a373] text-black border-[#d4a373]" : "border-white/10 text-gray-500 hover:border-white/20 hover:text-white"
+        {/* Category pills */}
+        {/* <div className="flex flex-wrap gap-2 mb-8">
+          <Link
+            href="/category/all"
+            className={`px-4 py-1.5 rounded-full text-xs border transition ${
+              currentSlug === "all"
+                ? "bg-[#1A4450] text-white border-[#1A4450]"
+                : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"
+            }`}
+          >
+            All
+          </Link>
+          {CATEGORIES.filter((c) => c.slug !== "uncategorized").map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/category/${cat.slug}`}
+              className={`px-4 py-1.5 rounded-full text-xs border transition ${
+                currentSlug === cat.slug
+                  ? "bg-[#1A4450] text-white border-[#1A4450]"
+                  : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"
               }`}
-            >{s}</button>
+            >
+              {cat.label}
+            </Link>
           ))}
-        </div>
-        <span className="text-gray-600 text-xs ml-auto hidden sm:block">{filtered.length} result{filtered.length !== 1 ? "s" : ""}</span>
-      </div>
+        </div> */}
 
-      {/* Grid */}
-      {!loaded ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => <LogoCardSkeleton key={i} />)}
-        </div>
-      ) : filtered.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filtered.map((logo) => <LogoCard key={logo.id} {...logo} />)}
-        </div>
-      ) : (
-        <div className="text-center py-24 text-gray-600">
-          <p className="text-5xl mb-4">🔍</p>
-          <p className="text-lg text-gray-500">No logos found</p>
-          <p className="text-sm mt-2 opacity-60">Try a different search term</p>
-        </div>
-      )}
+        {/* Results count */}
+        <p className="text-gray-400 text-sm mb-6">{filtered.length} logos found</p>
+
+        {/* Logo grid */}
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {filtered.map((logo) => (
+              <LogoCard key={logo.id} {...logo} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-5xl mb-4">🔍</p>
+            <p className="text-gray-400 text-lg">No logos found</p>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

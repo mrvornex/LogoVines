@@ -79,7 +79,6 @@ export default function DashboardPage() {
 
   return (
     <div className="bg-[#0a0a0a] min-h-screen">
-      <Navbar />
 
       <div className="pt-24 max-w-6xl mx-auto px-6 md:px-10 pb-20">
 

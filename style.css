@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* #container{
+    border: 2px solid black;
+    margin: 30px 100px;
+    padding: 30px 100px
+} */
+
+
+.box {
+    background-color: black;
+    margin: 10px 100px;
+    width: 500px;
+    height: 3px;
+}
+
+.td {
+    background-color: black;
+    margin: 10px 100px;
+    height: 100px;
+    width: 3px;
+}

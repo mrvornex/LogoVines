@@ -1,105 +1,71 @@
 import Link from "next/link";
 import { connectDB } from "@/lib/mongodb";
 import Logo from "@/models/Logo";
-import { TEMPLATE_CATEGORIES, templateCategoryToSlug } from "@/lib/templateCategories";
+import { templateCategoryToSlug } from "@/lib/templateCategories";
+
+// Har category: label, slug, bottom bar color, aur ek combined preview image (public/template-category-logos/ mein rakhni hai)
+const CATEGORIES = [
+  { slug: "animal",           label: "Animal",                color: "#29b6f6", image: "banner-template-category-animal.png" },
+  { slug: "building",         label: "Building",              color: "#f5a623", image: "banner-template-category-building.png" },
+  { slug: "business",         label: "Business",              color: "#e91e63", image: "banner-template-category-business.png" },
+  { slug: "food-drinks",      label: "Food and Drinks",       color: "#1a237e", image: "banner-template-category-food-and-drinks.png" },
+  { slug: "letter",           label: "Letter",                color: "#7e57c2", image: "banner-template-category-letter.png" },
+  { slug: "sports",           label: "Sports",                color: "#e53935", image: "banner-template-category-sports.png" },
+  { slug: "technology",       label: "Technology",            color: "#00897b", image: "banner-template-category-technology.png" },
+  { slug: "travel-transport", label: "Travel and Transport",  color: "#fb8c00", image: "banner-template-category-travel-and-transport.png" },
+];
 
 export default async function TemplateCategoriesSection() {
   await connectDB();
 
-  // Count + get preview images per template category
-  const categoryData = await Logo.aggregate([
-    { $match: { type: "template" } },
-    {
-      $group: {
-        _id:    "$category",
-        count:  { $sum: 1 },
-        images: { $push: "$imageUrl" },
-      },
-    },
+  const counts = await Logo.aggregate([
+    { $match: { type: "template", status: "approved" } },
+    { $group: { _id: "$category", count: { $sum: 1 } } },
   ]);
 
-  const dataMap: Record<string, { count: number; images: string[] }> = {};
-  categoryData.forEach((c: any) => {
-    const slug = templateCategoryToSlug(c._id || "");
-    dataMap[slug] = { count: c.count, images: c.images.slice(0, 6) };
+  const countMap: Record<string, number> = {};
+  counts.forEach((c: any) => {
+    countMap[templateCategoryToSlug(c._id || "")] = c.count;
   });
 
-  const totalTemplates = Object.values(dataMap).reduce((a, b) => a + b.count, 0);
-
   return (
-    <section id="template-categories" className="bg-[#080808] border-t border-white/5 py-24 px-6 md:px-16">
+    <section id="template-categories" className="bg-white py-20 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
-        <div className="text-center mb-14">
-          <p className="text-[#d4a373] text-xs uppercase tracking-[0.3em] mb-4">Ready to Use</p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white uppercase tracking-wide">
-            Popular Template Categories
-          </h2>
-          <div className="mt-4 w-16 h-[2px] bg-[#d4a373] mx-auto" />
-          <p className="text-gray-500 text-sm mt-5">
-            {totalTemplates}+ templates across {TEMPLATE_CATEGORIES.length} categories
-          </p>
-        </div>
+        <h2 className="text-center text-3xl md:text-4xl font-bold text-[#1A4450] mb-12">
+          Popular Template Categories
+        </h2>
 
-        {/* Grid — 4 columns, image preview cards like seeklogo */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {TEMPLATE_CATEGORIES.map((cat) => {
-            const data   = dataMap[cat.slug] || { count: 0, images: [] };
-            const images = data.images;
+          {CATEGORIES.map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/templates/${cat.slug}`}
+              className="block bg-white border border-[#1A4450]/10 rounded-xl overflow-hidden hover:border-[#1A4450]/30 transition"
+            >
+              {/* Category preview image */}
+              <div className="h-44 flex items-center justify-center p-3">
+                <img
+                  src={`/template-category-logos/${cat.image}`}
+                  alt={cat.label}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
 
-            return (
-              <Link
-                key={cat.slug}
-                href={`/templates/${cat.slug}`}
-                className="group bg-[#111] border border-white/5 rounded-2xl overflow-hidden hover:border-white/15 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] transition-all duration-300"
+              {/* Bottom color bar */}
+              <div
+                className="py-3 text-center text-white text-sm font-semibold"
+                style={{ background: cat.color }}
               >
-                {/* Preview grid — 6 logos */}
-                <div className="grid grid-cols-3 gap-[2px] p-3 bg-[#0d0d0d]">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="aspect-square rounded-lg overflow-hidden bg-[#111] flex items-center justify-center"
-                    >
-                      {images[i] ? (
-                        <img
-                          src={images[i]}
-                          alt=""
-                          className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                        />
-                      ) : (
-                        <span className="text-gray-800 text-lg">{cat.icon}</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Label bar */}
-                <div
-                  className="px-4 py-3 flex items-center justify-between"
-                  style={{ background: cat.color }}
-                >
-                  <span className="text-white text-xs font-bold uppercase tracking-widest">
-                    {cat.label}
-                  </span>
-                  <span className="text-white/70 text-[10px] font-medium">
-                    {data.count > 0 ? `${data.count} logos` : "Browse →"}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
+                {cat.label}
+                {countMap[cat.slug] > 0 && (
+                  <span className="opacity-80"> · {countMap[cat.slug]}</span>
+                )}
+              </div>
+            </Link>
+          ))}
         </div>
 
-        {/* View all */}
-        <div className="text-center mt-10">
-          <Link
-            href="/templates"
-            className="inline-flex items-center gap-2 border border-white/10 text-gray-400 hover:border-[#d4a373] hover:text-[#d4a373] text-xs uppercase tracking-widest px-6 py-3 rounded-full transition"
-          >
-            Browse All Templates →
-          </Link>
-        </div>
       </div>
     </section>
   );

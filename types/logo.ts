@@ -18,5 +18,5 @@ export interface LogoCardProps {
   desc: string;
   category: string;
   folderName?: string | null;
-  createdAt?: Date;
+  createdAt?: string;
 }
