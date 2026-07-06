@@ -71,7 +71,7 @@ export default function LogoGrid({ logos, categories }: Props) {
 
       {filtered.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          {filtered.map((logo) => (
+          {filtered.slice(0, 18).map((logo) => (
             <LogoCard key={logo.id} {...logo} />
           ))}
         </div>

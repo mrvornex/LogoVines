@@ -33,12 +33,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   ];
 
   return (
-    <div className="bg-[#0a0a0a] min-h-screen">
+    <div className="bg-[#ffffff] min-h-screen">
       <Navbar />
       <div className="pt-20 px-6 md:px-16 py-4 flex items-center justify-between border-b border-white/5">
         <div>
-          <p className="text-[#d4a373] text-xs uppercase tracking-widest">LogoVines</p>
-          <h1 className="text-white font-bold text-lg">Admin Panel</h1>
+          <p className="text-[#1A4450] text-xs uppercase tracking-widest">LogoVines</p>
+          <h1 className="text-[#1A4450] font-bold text-lg">Admin Panel</h1>
         </div>
         <LogoutButton />
       </div>
@@ -47,8 +47,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           {tabs.map((t) => (
             <a key={t.key} href={`/admin?tab=${t.key}`}
               className={`px-6 py-4 text-xs font-semibold uppercase tracking-widest border-b-2 transition-all duration-200 whitespace-nowrap ${
-                activeTab === t.key ? "border-[#d4a373] text-[#d4a373]" : "border-transparent text-gray-500 hover:text-white"
-              } ${t.key === "pending" && pendingCount > 0 ? "text-yellow-400" : ""}`}
+                activeTab === t.key ? "border-[#1A4450] text-[#1A4450]" : "border-transparent text-gray-500"
+              } ${t.key === "pending" && pendingCount > 0 ? "text-[#1A4450]" : ""}`}
             >{t.label}</a>
           ))}
         </div>
