@@ -97,23 +97,23 @@ export default function TemplateUploadForm() {
   // ── STEP 1: Choose Category
   if (step === "choose") {
     return (
-      <div className="min-h-[70vh] bg-[#0a0a0a] py-12 px-4">
+      <div className="min-h-[70vh] bg-[#ffffff] py-12 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-white tracking-widest uppercase">Select Template Category</h2>
+            <h2 className="text-2xl font-bold text-[#1A4450] tracking-widest uppercase">Select Template Category</h2>
             <p className="text-gray-500 text-sm mt-2">Choose which category to upload templates to</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {TEMPLATE_CATEGORIES.map((cat) => (
               <button key={cat.slug} onClick={() => { setSelectedCat(cat.dbValue); resetForm(); setStep("upload"); }}
-                className="group relative bg-[#111] border border-white/5 rounded-2xl p-5 flex flex-col items-center gap-3 hover:border-white/20 transition-all duration-300 hover:scale-[1.03] overflow-hidden"
+                className="group relative bg-[#fff] border border-white/5 rounded-2xl p-5 flex flex-col items-center gap-3 hover:border-white/20 transition-all duration-300 hover:scale-[1.03] overflow-hidden"
               >
                 <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" style={{ background: cat.color }} />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: `radial-gradient(circle at 50% 0%, ${cat.color}18 0%, transparent 70%)` }} />
                 <div className="text-2xl w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ background: `${cat.color}18` }}>
                   {cat.icon}
                 </div>
-                <p className="text-white text-xs font-semibold uppercase tracking-wide text-center">{cat.label}</p>
+                <p className="text-[#1A4450] text-xs font-semibold uppercase tracking-wide text-center">{cat.label}</p>
                 <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition text-xs" style={{ color: cat.color }}>→</div>
               </button>
             ))}
@@ -125,11 +125,11 @@ export default function TemplateUploadForm() {
 
   // ── STEP 2: Upload Form
   return (
-    <div className="min-h-[70vh] bg-[#0a0a0a] py-10 px-4">
+    <div className="min-h-[70vh] bg-[#ffffff] py-10 px-4">
       <div className="max-w-3xl mx-auto">
 
         <div className="flex items-center gap-4 mb-8">
-          <button onClick={() => { setStep("choose"); resetForm(); }} className="flex items-center gap-2 text-gray-500 hover:text-white transition text-xs uppercase tracking-widest">
+          <button onClick={() => { setStep("choose"); resetForm(); }} className="flex items-center gap-2 text-[#1A4450] transition text-xs uppercase tracking-widest">
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             Back
           </button>
@@ -140,8 +140,8 @@ export default function TemplateUploadForm() {
         </div>
 
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white tracking-widest uppercase">Upload to {currentCat?.label}</h2>
-          <p className="text-gray-500 text-sm mt-1">Logos go to Template → {currentCat?.label}</p>
+          <h2 className="text-2xl font-bold text-[#1A4450] tracking-widest uppercase">Upload to {currentCat?.label}</h2>
+          <p className="text-[#1A4450] text-sm mt-1">Logos go to Template → {currentCat?.label}</p>
         </div>
 
         {/* Tabs */}
@@ -164,7 +164,7 @@ export default function TemplateUploadForm() {
             <>
               <div onClick={() => fileRef.current?.click()} onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f?.type.startsWith("image/")) { setImage(f); setPreview(toPreview(f)); } }}
-                className="border-2 border-dashed border-white/10 rounded-2xl p-8 text-center cursor-pointer hover:border-white/30 transition group"
+                className="border-2 border-dashed border-black rounded-2xl p-8 text-center cursor-pointer hover:border-white/30 transition group"
               >
                 {preview ? <img src={preview} alt="preview" className="max-h-52 mx-auto rounded-xl object-contain" /> : (
                   <div className="text-gray-500 group-hover:text-gray-300 transition">
@@ -177,12 +177,12 @@ export default function TemplateUploadForm() {
               <div>
                 <label className="block text-xs text-gray-400 uppercase tracking-widest mb-2">Title *</label>
                 <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Template name"
-                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
+                  className="w-full bg-[#fff] border border-white/10 rounded-xl px-4 py-3 text-[#1A4450] text-sm focus:outline-none focus:border-[#a4a4a4] transition" />
               </div>
               <div>
                 <label className="block text-xs text-gray-400 uppercase tracking-widest mb-2">Description *</label>
                 <textarea value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Describe this template..." rows={3}
-                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition resize-none" />
+                  className="w-full bg-[#fff] border border-white/10 rounded-xl px-4 py-3 text-[#1A4450] text-sm focus:outline-none focus:border-[#989898] transition resize-none" />
               </div>
             </>
           )}
