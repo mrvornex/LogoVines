@@ -4,25 +4,23 @@ import { useState, useMemo } from "react";
 import LogoCard from "@/components/LogoCard";
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/categories";
-import { TEMPLATE_CATEGORIES } from "@/lib/templateCategories";
 
 interface Logo {
-  id:         string;
-  image:      string;
-  title:      string;
-  desc:       string;
-  category:   string;
+  id: string;
+  image: string;
+  title: string;
+  desc: string;
+  category: string;
   folderName?: string | null;
   createdAt?: string;
 }
 
 interface Props {
-  logos:       Logo[];
+  logos: Logo[];
   currentSlug: string;
-  type?:       "brand" | "template";
 }
 
-export default function CategoryPageClient({ logos, currentSlug, type = "brand" }: Props) {
+export default function CategoryPageClient({ logos, currentSlug }: Props) {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -33,15 +31,12 @@ export default function CategoryPageClient({ logos, currentSlug, type = "brand" 
     );
   }, [logos, search]);
 
-  const cats    = type === "template" ? TEMPLATE_CATEGORIES : CATEGORIES.filter((c) => c.slug !== "uncategorized");
-  const baseUrl = type === "template" ? "/templates" : "/category";
-
   return (
     <div className="bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6 py-8">
 
-        {/* Search */}
-        <div className="relative max-w-2xl mx-auto mb-8">
+        {/* Search bar */}
+        {/* <div className="relative max-w-2xl mx-auto mb-8">
           <input
             type="text"
             value={search}
@@ -50,30 +45,44 @@ export default function CategoryPageClient({ logos, currentSlug, type = "brand" 
             className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-[#1A4450] focus:outline-none focus:border-[#1A4450] transition"
           />
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">✕</button>
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >✕</button>
           )}
-        </div>
+        </div> */}
 
         {/* Category pills */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <Link href={`${baseUrl}/all`}
+        {/* <div className="flex flex-wrap gap-2 mb-8">
+          <Link
+            href="/category/all"
             className={`px-4 py-1.5 rounded-full text-xs border transition ${
-              currentSlug === "all" ? "bg-[#1A4450] text-white border-[#1A4450]" : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"
+              currentSlug === "all"
+                ? "bg-[#1A4450] text-white border-[#1A4450]"
+                : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"
             }`}
-          >All</Link>
-          {cats.map((cat) => (
-            <Link key={cat.slug} href={`${baseUrl}/${cat.slug}`}
+          >
+            All
+          </Link>
+          {CATEGORIES.filter((c) => c.slug !== "uncategorized").map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/category/${cat.slug}`}
               className={`px-4 py-1.5 rounded-full text-xs border transition ${
-                currentSlug === cat.slug ? "bg-[#1A4450] text-white border-[#1A4450]" : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"
+                currentSlug === cat.slug
+                  ? "bg-[#1A4450] text-white border-[#1A4450]"
+                  : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"
               }`}
-            >{cat.label}</Link>
+            >
+              {cat.label}
+            </Link>
           ))}
-        </div>
+        </div> */}
 
         {/* Results count */}
         <p className="text-gray-400 text-sm mb-6">{filtered.length} logos found</p>
 
-        {/* Grid */}
+        {/* Logo grid */}
         {filtered.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {filtered.map((logo) => (
@@ -86,6 +95,7 @@ export default function CategoryPageClient({ logos, currentSlug, type = "brand" 
             <p className="text-gray-400 text-lg">No logos found</p>
           </div>
         )}
+
       </div>
     </div>
   );
