@@ -122,32 +122,39 @@ export default function UploadForm() {
   const inputClass = "w-full border border-gray-200 rounded-lg px-4 py-3 text-[#1A4450] text-sm focus:outline-none focus:border-[#1A4450] transition";
 
   // ── STEP 1: Choose Category
-  if (step === "choose") {
+ if (step === "choose") {
+    const CATEGORY_CARDS = [
+      { slug: "auto-moto",    label: "Auto & Moto",     color: "#29b6f6", image: "banner-brand-category-auto-and-moto.png",     dbValue: "Auto & Moto" },
+      { slug: "fashion",      label: "Fashion",         color: "#f5a623", image: "banner-brand-category-fashion.png",            dbValue: "Fashion" },
+      { slug: "social-media", label: "Social Media",    color: "#e91e63", image: "banner-brand-category-social-media.png",       dbValue: "Social Media" },
+      { slug: "technology",   label: "Technology",      color: "#1a237e", image: "banner-brand-category-technology.png",         dbValue: "Technology" },
+      { slug: "food-drinks",  label: "Food and Drinks", color: "#7e57c2", image: "banner-brand-category-food-and-drinks.png",    dbValue: "Food & Drinks" },
+      { slug: "finance",      label: "Finance",         color: "#e53935", image: "banner-brand-category-finance.png",            dbValue: "Finance" },
+      { slug: "transport",    label: "Transport",       color: "#00897b", image: "banner-brand-category-transport.png",          dbValue: "Transport" },
+      { slug: "sports",       label: "Sports",          color: "#fb8c00", image: "banner-brand-category-sports.png",             dbValue: "Sports" },
+    ];
+
     return (
       <div className="bg-white min-h-[70vh] py-12 px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-bold text-[#1A4450]">Select Category</h2>
             <p className="text-gray-400 text-sm mt-2">Choose which category to upload logos to</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {CATEGORIES.filter((c) => c.slug !== "uncategorized").map((cat) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {CATEGORY_CARDS.map((cat) => (
               <button key={cat.slug}
                 onClick={() => { setSelectedCat(cat.dbValue); resetForm(); setStep("upload"); }}
-                className="border border-gray-200 rounded-xl p-5 flex flex-col items-center gap-3 hover:border-[#1A4450]/40 hover:shadow-sm transition"
+                className="block bg-white border border-[#1A4450]/10 rounded-xl overflow-hidden hover:border-[#1A4450]/30 transition text-left"
               >
-                <div className="text-2xl w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${cat.color}18` }}>
-                  {cat.icon}
+                <div className="h-36 flex items-center justify-center p-1 bg-white">
+                  <img src={`/category-logos/${cat.image}`} alt={cat.label} className="max-w-full max-h-full object-contain" />
                 </div>
-                <p className="text-[#1A4450] text-xs font-semibold uppercase tracking-wide text-center">{cat.label}</p>
+                <div className="py-2.5 text-center text-white text-sm font-semibold" style={{ background: cat.color }}>
+                  {cat.label}
+                </div>
               </button>
             ))}
-            <button onClick={() => { setSelectedCat("Uncategorized"); resetForm(); setStep("upload"); }}
-              className="border border-gray-200 rounded-xl p-5 flex flex-col items-center gap-3 hover:border-[#1A4450]/40 transition"
-            >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100 text-gray-500 text-2xl">◉</div>
-              <p className="text-[#1A4450] text-xs font-semibold uppercase tracking-wide">Other</p>
-            </button>
           </div>
         </div>
       </div>
