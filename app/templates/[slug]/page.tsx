@@ -1,6 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import Logo from "@/models/Logo";
-import Navbar from "@/components/Navbar";
+// import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { TEMPLATE_CATEGORIES, templateSlugToDbValue, templateSlugToLabel } from "@/lib/templateCategories";
 import CategoryPageClient from "@/components/CategoryPageClient";
@@ -34,7 +34,7 @@ export default async function TemplateCategoryPage({ params }: Props) {
 
   return (
     <div className="bg-white min-h-screen">
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="pt-20">
 
         {/* Header */}
