@@ -123,7 +123,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  className="w-full bg-[#ffffff] border border-white/10 rounded-xl pl-11 pr-12 py-3 text-[#1A4450] text-sm focus:outline-none focus:border-[#d4a373] transition placeholder-gray-700"
+                  className="w-full bg-[#ffffff] border border-white/10 rounded-xl pl-11 pr-12 py-3 text-[#1A4450] text-sm focus:outline-none transition placeholder-[#1A4450]"
                 />
                 <button
                   type="button"
@@ -148,7 +148,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#e8b989] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full py-3.5 bg-[#1A4450] text-white font-bold uppercase tracking-widest text-sm rounded-xl transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
