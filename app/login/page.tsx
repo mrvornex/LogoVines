@@ -8,9 +8,9 @@ export default function LoginPage() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPass, setShowPass]  = useState(false);
-  const [loading,  setLoading]   = useState(false);
-  const [error,    setError]     = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,10 +23,10 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res  = await fetch("/api/auth/login", {
-        method:  "POST",
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
@@ -90,8 +90,8 @@ export default function LoginPage() {
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1A4450]">
                   <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2"/>
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2" />
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                 </span>
                 <input
@@ -113,8 +113,8 @@ export default function LoginPage() {
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1A4450]">
                   <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                    <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2"/>
-                    <path d="M8 11V7a4 4 0 1 1 8 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2" />
+                    <path d="M8 11V7a4 4 0 1 1 8 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                 </span>
                 <input
@@ -132,12 +132,12 @@ export default function LoginPage() {
                 >
                   {showPass ? (
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                      <path d="M3 3l18 18M10.5 10.5A3 3 0 0 0 13.5 13.5M6.5 6.5A9.77 9.77 0 0 0 3 12c2 4 5.4 7 9 7a9.26 9.26 0 0 0 5.5-1.9M9 5.1A9.15 9.15 0 0 1 12 5c3.6 0 7 3 9 7a11 11 0 0 1-1.4 2.4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M3 3l18 18M10.5 10.5A3 3 0 0 0 13.5 13.5M6.5 6.5A9.77 9.77 0 0 0 3 12c2 4 5.4 7 9 7a9.26 9.26 0 0 0 5.5-1.9M9 5.1A9.15 9.15 0 0 1 12 5c3.6 0 7 3 9 7a11 11 0 0 1-1.4 2.4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   ) : (
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                      <path d="M3 12c2-4 5.4-7 9-7s7 3 9 7c-2 4-5.4 7-9 7s-7-3-9-7z" stroke="currentColor" strokeWidth="2"/>
-                      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 12c2-4 5.4-7 9-7s7 3 9 7c-2 4-5.4 7-9 7s-7-3-9-7z" stroke="currentColor" strokeWidth="2" />
+                      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
                     </svg>
                   )}
                 </button>
@@ -148,14 +148,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-[#1A4450] text-white font-bold uppercase tracking-widest text-sm rounded-xl transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full py-3.5 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#e8b989] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin" width="16" height="16" fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/>
+                  <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20" />
                   </svg>
-                  Signing in...
+                  Please wait...
                 </span>
               ) : "Sign In"}
             </button>

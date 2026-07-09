@@ -33,7 +33,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
 
         {/* Logo */}
-        <div className="text-center mb-5 mt-9">
+        <div className="text-center mb-5 mt-20">
           <Link href="/">
             <h1 className="text-xl font-extrabold tracking-widest text-[#1A4450] uppercase">Logo Vines</h1>
           </Link>
