@@ -15,14 +15,14 @@ export const TEMPLATE_CATEGORIES: TemplateCategory[] = [
   { slug: "sports",            label: "Sports",             dbValue: "Sports",             icon: "⚽", color: "#f27676" },
   { slug: "technology",        label: "Technology",         dbValue: "Technology",         icon: "💻", color: "#27ae60" },
   { slug: "travel-transport",  label: "Travel & Transport", dbValue: "Travel & Transport", icon: "✈️", color: "#e8c96a" },
-  { slug: "nature",            label: "Nature",             dbValue: "Nature",             icon: "🌿", color: "#6fcf97" },
-  { slug: "fashion-beauty",    label: "Fashion & Beauty",   dbValue: "Fashion & Beauty",   icon: "💄", color: "#e879a0" },
-  { slug: "education",         label: "Education",          dbValue: "Education",          icon: "🎓", color: "#56ccf2" },
-  { slug: "music-arts",        label: "Music & Arts",       dbValue: "Music & Arts",       icon: "🎵", color: "#c4854a" },
-  { slug: "health-medical",    label: "Health & Medical",   dbValue: "Health & Medical",   icon: "🏥", color: "#27ae60" },
-  { slug: "real-estate",       label: "Real Estate",        dbValue: "Real Estate",        icon: "🏠", color: "#56ccf2" },
-  { slug: "finance-crypto",    label: "Finance & Crypto",   dbValue: "Finance & Crypto",   icon: "💰", color: "#e8c96a" },
-  { slug: "gaming",            label: "Gaming",             dbValue: "Gaming",             icon: "🎮", color: "#a78bfa" },
+  // { slug: "nature",            label: "Nature",             dbValue: "Nature",             icon: "🌿", color: "#6fcf97" },
+  // { slug: "fashion-beauty",    label: "Fashion & Beauty",   dbValue: "Fashion & Beauty",   icon: "💄", color: "#e879a0" },
+  // { slug: "education",         label: "Education",          dbValue: "Education",          icon: "🎓", color: "#56ccf2" },
+  // { slug: "music-arts",        label: "Music & Arts",       dbValue: "Music & Arts",       icon: "🎵", color: "#c4854a" },
+  // { slug: "health-medical",    label: "Health & Medical",   dbValue: "Health & Medical",   icon: "🏥", color: "#27ae60" },
+  // { slug: "real-estate",       label: "Real Estate",        dbValue: "Real Estate",        icon: "🏠", color: "#56ccf2" },
+  // { slug: "finance-crypto",    label: "Finance & Crypto",   dbValue: "Finance & Crypto",   icon: "💰", color: "#e8c96a" },
+  // { slug: "gaming",            label: "Gaming",             dbValue: "Gaming",             icon: "🎮", color: "#a78bfa" },
 ];
 
 export function templateCategoryToSlug(dbValue: string): string {

@@ -15,14 +15,14 @@ export const CATEGORIES: Category[] = [
   { slug: "finance",          label: "Finance",            dbValue: "Finance",            icon: "💰", color: "#27ae60" },
   { slug: "sports",           label: "Sports",             dbValue: "Sports",             icon: "⚽", color: "#f27676" },
   { slug: "transport",        label: "Transport",          dbValue: "Transport",          icon: "✈️", color: "#e8c96a" },
-  { slug: "health-medical",   label: "Health & Medical",   dbValue: "Health & Medical",   icon: "🏥", color: "#6fcf97" },
-  { slug: "education",        label: "Education",          dbValue: "Education",          icon: "🎓", color: "#c4854a" },
-  { slug: "real-estate",      label: "Real Estate",        dbValue: "Real Estate",        icon: "🏠", color: "#56ccf2" },
-  { slug: "beauty-cosmetics", label: "Beauty & Cosmetics", dbValue: "Beauty & Cosmetics", icon: "💄", color: "#e879a0" },
-  { slug: "music",            label: "Music",              dbValue: "Music",              icon: "🎵", color: "#a78bfa" },
-  { slug: "game",             label: "Game",               dbValue: "Game",               icon: "🎮", color: "#6c9fff" },
-  { slug: "government",       label: "Government",         dbValue: "Government",         icon: "🏛",  color: "#e8c96a" },
-  { slug: "uncategorized",    label: "Uncategorized",      dbValue: "Uncategorized",      icon: "◉",  color: "#d4a373" },
+  // { slug: "health-medical",   label: "Health & Medical",   dbValue: "Health & Medical",   icon: "🏥", color: "#6fcf97" },
+  // { slug: "education",        label: "Education",          dbValue: "Education",          icon: "🎓", color: "#c4854a" },
+  // { slug: "real-estate",      label: "Real Estate",        dbValue: "Real Estate",        icon: "🏠", color: "#56ccf2" },
+  // { slug: "beauty-cosmetics", label: "Beauty & Cosmetics", dbValue: "Beauty & Cosmetics", icon: "💄", color: "#e879a0" },
+  // { slug: "music",            label: "Music",              dbValue: "Music",              icon: "🎵", color: "#a78bfa" },
+  // { slug: "game",             label: "Game",               dbValue: "Game",               icon: "🎮", color: "#6c9fff" },
+  // { slug: "government",       label: "Government",         dbValue: "Government",         icon: "🏛",  color: "#e8c96a" },
+  // { slug: "uncategorized",    label: "Uncategorized",      dbValue: "Uncategorized",      icon: "◉",  color: "#d4a373" },
 ];
 
 export function categoryToSlug(dbValue: string): string {
