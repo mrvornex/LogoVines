@@ -41,7 +41,7 @@ export default function WhatsAppButton() {
         <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-30" />
 
         {/* WhatsApp Icon */}
-        <svg
+        <svg 
           width="28"
           height="28"
           viewBox="0 0 32 32"
