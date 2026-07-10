@@ -26,7 +26,6 @@ function LoginForm() {
         body:    JSON.stringify(form),
       });
       const data = await res.json();
-
       if (data.success) {
         router.push("/"); router.refresh();
       } else if (data.notVerified) {
@@ -54,99 +53,96 @@ function LoginForm() {
     finally { setResending(false); }
   };
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
-      <div className="absolute inset-0 opacity-5" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, #d4a373 1px, transparent 0)`, backgroundSize: "40px 40px" }} />
+  const inputClass = "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[#1A4450] text-sm placeholder-gray-400 focus:outline-none focus:border-[#1A4450] transition";
 
-      <div className="relative w-full max-w-md">
-        <div className="text-center mb-10">
-          <Link href="/"><h1 className="text-3xl font-extrabold tracking-widest text-[#d4a373] uppercase">Logo Vines</h1></Link>
-          <p className="text-gray-600 text-xs tracking-[0.3em] uppercase mt-2">Member Login</p>
+  return (
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-10">
+      <div className="w-full max-w-sm">
+
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <Link href="/">
+            <h1 className="text-xl font-extrabold tracking-widest text-[#1A4450] uppercase">Logo Vines</h1>
+          </Link>
+          <p className="text-[#1A4450]/50 text-[10px] tracking-[0.3em] uppercase mt-1">Member Login</p>
         </div>
 
-        <div className="bg-[#111] border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-white text-xl font-bold mb-1">Welcome back</h2>
-          <p className="text-gray-500 text-sm mb-7">Sign in to upload and manage your logos</p>
+        {/* Card */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <h2 className="text-[#1A4450] text-base font-bold mb-0.5">Welcome back</h2>
+          <p className="text-gray-400 text-xs mb-5">Sign in to upload and manage your logos</p>
 
-          {/* Success — just registered */}
+          {/* Registered success */}
           {registered && !error && (
-            <div className="mb-5 p-4 rounded-xl bg-[#d4a373]/10 border border-[#d4a373]/30 text-[#d4a373] text-sm space-y-2">
+            <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-xs space-y-1">
               <p className="font-bold">✉️ Verification email sent!</p>
-              <p className="text-[#d4a373]/80 text-xs leading-relaxed">
-                Please check your inbox and click the verification link to activate your account.
-              </p>
-              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3 mt-2">
-                <p className="text-yellow-300 text-xs font-semibold mb-1">⚠️ Email in Spam?</p>
-                <p className="text-yellow-400/80 text-xs leading-relaxed">
-                  If you don't see the email in your inbox, check your <strong>Spam / Junk</strong> folder.
-                  Open the email and click <strong>"Report as not spam"</strong> or <strong>"Not spam"</strong> to move it to inbox.
-                </p>
+              <p>Check your inbox and click the verification link.</p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 mt-1">
+                <p className="text-yellow-700 text-[10px] font-semibold">⚠️ Email in Spam?</p>
+                <p className="text-yellow-600 text-[10px]">Check Spam/Junk folder and click "Not spam".</p>
               </div>
             </div>
           )}
 
           {/* Error */}
           {error && !notVerified && (
-            <div className="mb-5 p-3 rounded-xl bg-red-900/20 border border-red-500/30 text-red-400 text-sm">⚠ {error}</div>
+            <div className="mb-4 p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-500 text-xs">⚠ {error}</div>
           )}
 
-          {/* Not verified — special box */}
+          {/* Not verified */}
           {notVerified && (
-            <div className="mb-5 p-4 rounded-xl bg-yellow-900/20 border border-yellow-500/30 text-yellow-300 text-sm">
+            <div className="mb-4 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs">
               <p className="font-semibold mb-1">📧 Email not verified</p>
-              <p className="text-yellow-400/80 text-xs mb-3">Check your inbox for the verification link.</p>
-              <button
-                onClick={handleResend}
-                disabled={resending}
-                className="text-[#d4a373] text-xs font-semibold uppercase tracking-widest hover:underline disabled:opacity-50 flex items-center gap-1"
+              <p className="mb-2">Check your inbox for the verification link.</p>
+              <button onClick={handleResend} disabled={resending}
+                className="text-[#1A4450] font-semibold hover:underline disabled:opacity-50 flex items-center gap-1"
               >
                 {resending ? (
                   <><svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/></svg>Sending...</>
                 ) : "↺ Resend verification email"}
               </button>
-              {resendMsg && <p className="text-xs mt-2 text-green-400">{resendMsg}</p>}
+              {resendMsg && <p className="mt-1 text-green-600">{resendMsg}</p>}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Email</label>
+              <label className="block text-[10px] text-[#1A4450]/60 uppercase tracking-widest mb-1">Email</label>
               <input type="email" value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="you@email.com" required
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
+                placeholder="you@email.com" required className={inputClass} />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Password</label>
+              <label className="block text-[10px] text-[#1A4450]/60 uppercase tracking-widest mb-1">Password</label>
               <div className="relative">
                 <input type={show ? "text" : "password"} value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="••••••••" required
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 pr-16 text-white text-sm focus:outline-none focus:border-[#d4a373] transition" />
+                  placeholder="••••••••" required className={inputClass + " pr-14"} />
                 <button type="button" onClick={() => setShow(!show)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition text-xs uppercase tracking-widest">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1A4450] text-[10px] uppercase tracking-widest transition">
                   {show ? "Hide" : "Show"}
                 </button>
               </div>
             </div>
 
             <button type="submit" disabled={loading}
-              className="w-full py-3.5 bg-[#d4a373] text-black font-bold uppercase tracking-widest text-sm rounded-xl hover:bg-[#e8b989] transition disabled:opacity-50 flex items-center justify-center gap-2">
-              {loading ? (
-                <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/></svg>Signing in...</>
-              ) : "Sign In"}
+              className="w-full py-2.5 bg-[#1A4450] text-white font-bold uppercase tracking-widest text-xs rounded-lg hover:bg-[#1A4450]/80 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-1"
+            >
+              {loading
+                ? <><svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="20"/></svg>Please wait...</>
+                : "Sign In"}
             </button>
           </form>
 
-          <p className="text-center text-gray-600 text-sm mt-6">
+          <p className="text-center text-gray-400 text-xs mt-4">
             Don't have an account?{" "}
-            <Link href="/signup" className="text-[#d4a373] hover:underline">Sign Up</Link>
+            <Link href="/signup" className="text-[#1A4450] font-semibold hover:underline">Sign Up</Link>
           </p>
         </div>
 
-        <p className="text-center mt-6">
-          <Link href="/" className="text-gray-600 hover:text-[#d4a373] text-xs uppercase tracking-widest transition">← Back to Website</Link>
+        <p className="text-center mt-4">
+          <Link href="/" className="text-gray-400 hover:text-[#1A4450] text-[10px] uppercase tracking-widest transition">← Back to Website</Link>
         </p>
       </div>
     </div>
