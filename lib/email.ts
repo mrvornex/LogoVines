@@ -9,9 +9,9 @@ const transporter = nodemailer.createTransport({
 });
 
 interface EmailOptions {
-  to:      string;
+  to: string;
   subject: string;
-  html:    string;
+  html: string;
 }
 
 export async function sendEmail({ to, subject, html }: EmailOptions) {
@@ -36,7 +36,7 @@ export async function sendEmail({ to, subject, html }: EmailOptions) {
 const header = `
 <tr><td style="background:#1A4450;padding:28px 32px;text-align:center;">
   <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:4px;text-transform:uppercase;">LOGO VINES</h1>
-  <p style="margin:6px 0 0;color:rgba(255,255,255,0.6);font-size:11px;letter-spacing:3px;text-transform:uppercase;">Graphic Design Studio</p>
+  // <p style="margin:6px 0 0;color:rgba(255,255,255,0.6);font-size:11px;letter-spacing:3px;text-transform:uppercase;">Graphic Design Studio</p>
 </td></tr>`;
 
 const footer = (year: number) => `
@@ -178,10 +178,10 @@ export function emailVerification(name: string, verifyUrl: string) {
           This link expires in <strong style="color:#6b7280;">24 hours</strong>.<br/>
           If you didn't create an account, ignore this email.
         </p>
-        <div style="margin:20px 0 0;padding:14px;background:#f9fafb;border-radius:8px;word-break:break-all;">
-          <p style="color:#9ca3af;font-size:11px;margin:0 0 4px;">Or copy this link:</p>
-          <p style="color:#1A4450;font-size:11px;margin:0;">${verifyUrl}</p>
-        </div>
+        // <div style="margin:20px 0 0;padding:14px;background:#f9fafb;border-radius:8px;word-break:break-all;">
+        //   <p style="color:#9ca3af;font-size:11px;margin:0 0 4px;">Or copy this link:</p>
+        //   <p style="color:#1A4450;font-size:11px;margin:0;">${verifyUrl}</p>
+        // </div>
       </td></tr>
     `),
   };
