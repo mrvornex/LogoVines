@@ -38,17 +38,15 @@ export default function CategoryPageClient({ logos, currentSlug, type = "brand" 
     <div className="bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6 py-8">
 
-        {/* Search */}
-        <div className="relative max-w-2xl mx-auto mb-8">
+        {/* <div className="relative max-w-2xl mx-auto mb-8">
           <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search logos..."
             className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-[#1A4450] focus:outline-none focus:border-[#1A4450] transition" />
           {search && (
             <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">✕</button>
           )}
-        </div>
-
-        {/* Category pills */}
+        </div> */}
+{/* 
         <div className="flex flex-wrap gap-2 mb-8">
           <Link href={`${baseUrl}/all`}
             className={`px-4 py-1.5 rounded-full text-xs border transition ${currentSlug === "all" ? "bg-[#1A4450] text-white border-[#1A4450]" : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"}`}
@@ -58,7 +56,7 @@ export default function CategoryPageClient({ logos, currentSlug, type = "brand" 
               className={`px-4 py-1.5 rounded-full text-xs border transition ${currentSlug === cat.slug ? "bg-[#1A4450] text-white border-[#1A4450]" : "text-[#1A4450]/60 border-gray-200 hover:border-[#1A4450] hover:text-[#1A4450]"}`}
             >{cat.label}</Link>
           ))}
-        </div>
+        </div> */}
 
         <p className="text-gray-400 text-sm mb-6">{filtered.length} logos found</p>
 
