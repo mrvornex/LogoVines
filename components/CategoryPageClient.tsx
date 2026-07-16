@@ -7,13 +7,13 @@ import { CATEGORIES } from "@/lib/categories";
 import { TEMPLATE_CATEGORIES } from "@/lib/templateCategories";
 
 interface Logo {
-  id:         string;
-  image:      string;
-  title:      string;
-  desc:       string;
-  category:   string;
+  id:          string;
+  image:       string;
+  title:       string;
+  desc:        string;
+  category:    string;
   folderName?: string | null;
-  createdAt?: string;
+  createdAt?:  string;
 }
 
 interface Props {
@@ -22,127 +22,86 @@ interface Props {
   type?:       "brand" | "template";
 }
 
-type SortOption = "popular" | "newest";
-
-function getFileType(url: string): string {
-  const ext = url.split("?")[0].split(".").pop()?.toLowerCase() || "";
-  if (["ai", "eps", "cdr", "svg", "pdf", "png", "jpg", "jpeg", "webp"].includes(ext)) return ext;
-  return "png";
-}
+type SortOption = "newest" | "popular";
 
 export default function CategoryPageClient({ logos, currentSlug, type = "brand" }: Props) {
-  const [search,     setSearch]     = useState("");
-  const [sort,       setSort]       = useState<SortOption>("newest");
-  const [formats,    setFormats]    = useState<string[]>([]);
+  const [search,      setSearch]      = useState("");
+  const [sort,        setSort]        = useState<SortOption>("newest");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const cats    = type === "template" ? TEMPLATE_CATEGORIES : CATEGORIES.filter((c) => c.slug !== "uncategorized");
   const baseUrl = type === "template" ? "/templates" : "/category";
 
-  const toggleFormat = (fmt: string) => {
-    setFormats((prev) => prev.includes(fmt) ? prev.filter((f) => f !== fmt) : [...prev, fmt]);
-  };
-
   const filtered = useMemo(() => {
     let result = [...logos];
 
-    // Search
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter((l) => l.title.toLowerCase().includes(q) || l.category.toLowerCase().includes(q));
     }
 
-    // Format filter
-    if (formats.length > 0) {
-      result = result.filter((l) => formats.includes(getFileType(l.image)));
-    }
-
-    // Sort
     if (sort === "newest") {
       result.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
     }
-    // "popular" = default order (as fetched)
 
     return result;
-  }, [logos, search, formats, sort]);
-
-  const availableFormats = ["ai", "eps", "cdr", "svg", "pdf", "png", "jpg"];
+  }, [logos, search, sort]);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-6 flex gap-6">
 
       {/* Sidebar */}
-      <div className={`flex-shrink-0 transition-all duration-300 ${sidebarOpen ? "w-56" : "w-0 overflow-hidden"}`}>
-        {sidebarOpen && (
+      {sidebarOpen && (
+        <div className="w-52 flex-shrink-0">
           <div className="border border-gray-200 rounded-xl p-5 sticky top-24">
 
-            {/* Header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2" stroke="#1A4450" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2" stroke="#1A4450" strokeWidth="1.8" strokeLinecap="round"/></svg>
                 <span className="text-[#1A4450] font-semibold text-sm">Filters</span>
               </div>
               <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-[#1A4450]">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
               </button>
             </div>
 
             {/* Sort By */}
             <div className="mb-5">
               <p className="text-[#1A4450] text-xs font-semibold uppercase tracking-widest mb-3">Sort By</p>
-              {(["popular", "newest"] as SortOption[]).map((s) => (
-                <label key={s} className="flex items-center gap-2 mb-2 cursor-pointer">
-                  <input type="radio" name="sort" checked={sort === s} onChange={() => setSort(s)}
-                    className="accent-[#1A4450]" />
-                  <span className="text-sm text-[#1A4450]">{s === "popular" ? "Most Popular" : "Newest"}</span>
+              {([["popular", "Most Popular"], ["newest", "Newest"]] as const).map(([val, label]) => (
+                <label key={val} className="flex items-center gap-2 mb-2 cursor-pointer">
+                  <input type="radio" name="sort" checked={sort === val} onChange={() => setSort(val)} className="accent-[#1A4450]" />
+                  <span className="text-sm text-[#1A4450]">{label}</span>
                 </label>
               ))}
             </div>
-            <hr className="border-gray-200 mb-5" />
+
+            <hr className="border-gray-100 mb-5" />
 
             {/* Category Type */}
             <div className="mb-5">
               <p className="text-[#1A4450] text-xs font-semibold uppercase tracking-widest mb-3">Category</p>
-              <label className="flex items-center gap-2 mb-2 cursor-pointer">
-                <input type="radio" name="cattype" checked={type === "brand"} onChange={() => {}}
-                  onClick={() => window.location.href = `/category/${currentSlug}`}
-                  className="accent-[#1A4450]" />
+              <label className="flex items-center gap-2 mb-2 cursor-pointer" onClick={() => window.location.href = `/category/${currentSlug}`}>
+                <input type="radio" readOnly checked={type === "brand"} className="accent-[#1A4450]" />
                 <span className="text-sm text-[#1A4450]">Brand</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="cattype" checked={type === "template"} onChange={() => {}}
-                  onClick={() => window.location.href = `/templates/${currentSlug === "all" ? "all" : currentSlug}`}
-                  className="accent-[#1A4450]" />
+              <label className="flex items-center gap-2 cursor-pointer" onClick={() => window.location.href = `/templates/${currentSlug === "all" ? "all" : currentSlug}`}>
+                <input type="radio" readOnly checked={type === "template"} className="accent-[#1A4450]" />
                 <span className="text-sm text-[#1A4450]">Template</span>
               </label>
             </div>
-            <hr className="border-gray-200 mb-5" />
 
-            {/* Format */}
-            <div className="mb-5">
-              <p className="text-[#1A4450] text-xs font-semibold uppercase tracking-widest mb-3">Format</p>
-              <div className="grid grid-cols-3 gap-2">
-                {availableFormats.map((fmt) => (
-                  <label key={fmt} className="flex items-center gap-1 cursor-pointer">
-                    <input type="checkbox" checked={formats.includes(fmt)} onChange={() => toggleFormat(fmt)}
-                      className="accent-[#1A4450] w-3.5 h-3.5" />
-                    <span className="text-xs text-[#1A4450]">.{fmt}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <hr className="border-gray-200 mb-4" />
+            <hr className="border-gray-100 mb-4" />
 
-            {/* Clear */}
-            <button onClick={() => { setFormats([]); setSort("newest"); setSearch(""); }}
+            <button onClick={() => { setSort("newest"); setSearch(""); }}
               className="text-gray-400 hover:text-[#1A4450] text-xs transition w-full text-right">
               Clear Filter
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Main content */}
+      {/* Main */}
       <div className="flex-1 min-w-0">
 
         {/* Toolbar */}
@@ -154,8 +113,6 @@ export default function CategoryPageClient({ logos, currentSlug, type = "brand" 
               Filters
             </button>
           )}
-
-          {/* Search */}
           <div className="relative flex-1 max-w-sm">
             <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search logos..."
@@ -164,7 +121,6 @@ export default function CategoryPageClient({ logos, currentSlug, type = "brand" 
               <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">✕</button>
             )}
           </div>
-
           <p className="text-gray-400 text-sm ml-auto">{filtered.length} logos found</p>
         </div>
 
